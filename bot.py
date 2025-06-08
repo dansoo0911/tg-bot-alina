@@ -10,8 +10,13 @@ from telegram.ext import (
     filters,
 )
 
-TOKEN = "8129432580:AAEMkElUeo_Pct7LT5zudiTxK613cFLGAFI"
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
+if BOT_TOKEN is None:
+    raise EnvironmentError("TELEGRAM_BOT_TOKEN not set")
+if OPENAI_API_KEY is None:
+    raise EnvironmentError("OPENAI_API_KEY not set")
 
 openai.api_key = OPENAI_API_KEY
 
@@ -36,7 +41,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(text)
 
 if __name__ == "__main__":
-    app = ApplicationBuilder().token(TOKEN).build()
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
     app.run_polling()
